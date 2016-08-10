@@ -62,12 +62,7 @@ def open_top_bar(scr_dim):
 
 def open_front_main(scr_dim):
 
-    scr_front_main = curses.newwin(scr_dim[0]-4, scr_dim[1], 4, 0)
-
-    if scr_dim[1] > 64:
-        scr_front_main.addstr(2, 2, "HELP:")
-        scr_front_main.addstr(3, 2, "Make sure to open the database from the command line")
-        scr_front_main.addstr(4, 2, "e.g. sqlcrush demo.sqlite3")
+    def print_keys_help():
         scr_front_main.addstr(6, 2, "[h] Toggle help window")
         scr_front_main.addstr(7, 2, "[Arrows] Move around database")
         scr_front_main.addstr(8, 2, "[<>] Move between headers for each table")
@@ -77,6 +72,14 @@ def open_front_main(scr_dim):
         scr_front_main.addstr(12, 2, "[u] Update database entry")
         scr_front_main.addstr(13, 2, "[d] Delete database entry, cell or execution")
         scr_front_main.addstr(14, 2, "[q] Quit")
+
+    scr_front_main = curses.newwin(scr_dim[0]-4, scr_dim[1], 4, 0)
+
+    if scr_dim[1] > 64:
+        scr_front_main.addstr(2, 2, "HELP:")
+        scr_front_main.addstr(3, 2, "Make sure to open the database from the command line")
+        scr_front_main.addstr(4, 2, "e.g. sqlcrush demo.sqlite3")
+        print_keys_help()
         scr_front_main.addstr(16, 2, "Make sure to use q to quit otherwise changes won't save")
 
         if scr_dim[0] > 25:
@@ -89,15 +92,7 @@ def open_front_main(scr_dim):
         scr_front_main.addstr(2, 2, "HELP:")
         scr_front_main.addstr(3, 2, "Open from shell")
         scr_front_main.addstr(4, 2, "e.g. sqlcrush demo.sqlite3")
-        scr_front_main.addstr(6, 2, "[h] Toggle help window")
-        scr_front_main.addstr(7, 2, "[Arrows] Move around database")
-        scr_front_main.addstr(8, 2, "[<>] Move between headers for each table")
-        scr_front_main.addstr(9, 2, "[delete] Move back to table select")
-        scr_front_main.addstr(10, 2, "[f] Find in database")
-        scr_front_main.addstr(11, 2, "[n] New database entry or new execution")
-        scr_front_main.addstr(12, 2, "[u] Update database entry")
-        scr_front_main.addstr(13, 2, "[d] Delete database entry, cell or execution")
-        scr_front_main.addstr(14, 2, "[q] Quit")
+        print_keys_help()
         scr_front_main.addstr(16, 2, "Save by quitting")
 
     scr_front_main.border(0)
@@ -242,25 +237,25 @@ while x != ord("q"):
             n = 2
             p = 0
             shown_tables = []
-            for table in all_tables:
-                shown_tables.append(str(table)[2:-3])
-                if str(table)[2:-3] not in table_executions:
-                    table_executions[str(table)[2:-3]] = []
+            for [table_name] in all_tables:
+                shown_tables.append(table_name)
+                if table_name not in table_executions:
+                    table_executions[table_name] = []
                 if n - 2 >= scr_dim[0] - 10:
                     continue
                 if cursor_main[1] >= p + 1:
                     p = p + 1
                     continue
-                if len(str(table)) > 16:
+                if len(table_name) > 16:
                     if cursor_main[0] + cursor_main[1] == p + 1:
-                        scr_show_left.addstr(n, 1, str(table)[2:13] + "...", curses.A_REVERSE)
+                        scr_show_left.addstr(n, 1, table_name[2:13] + "...", curses.A_REVERSE)
                     else:
-                        scr_show_left.addstr(n, 1, str(table)[2:13] + "...")
+                        scr_show_left.addstr(n, 1, table_name[2:13] + "...")
                 else:
                     if cursor_main[0] + cursor_main[1] == p + 1:
-                        scr_show_left.addstr(n, 1, str(table)[2:-3], curses.A_REVERSE)
+                        scr_show_left.addstr(n, 1, table_name, curses.A_REVERSE)
                     else:
-                        scr_show_left.addstr(n, 1, str(table)[2:-3])
+                        scr_show_left.addstr(n, 1, table_name)
                 n = n + 1
                 p = p + 1
 
